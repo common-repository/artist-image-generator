@@ -1,0 +1,54 @@
+{
+    "landingPage": "/wp-admin/upload.php?page=artist_image_generator&action=settings",
+    "preferredVersions": {
+        "php": "8.0",
+        "wp": "latest"
+    },
+    "phpExtensionBundles": [
+        "kitchen-sink"
+    ],
+    "features": {
+        "networking": true
+    },
+    "steps": [
+        {
+            "step": "defineWpConfigConsts",
+            "consts": {
+                "WP_DEBUG": true
+            }
+        },
+        {
+            "step": "login",
+            "username": "admin",
+            "password": "password"
+        },
+        {
+            "step": "installPlugin",
+            "pluginZipFile": {
+                "resource": "wordpress.org/plugins",
+                "slug": "artist-image-generator"
+            },
+            "options": {
+                "activate": true
+            }
+        },
+        {
+            "step": "setSiteOptions",
+            "options":{
+                "artist_image_generator_aig_licence_key_activated_0": "1",
+                "artist_image_generator_openai_api_key_0": "sk-{replace_by_your_open_ai_key}",
+                "artist_image_generator_aig_licence_key_0": "AIG41-BB-4B-D2PRO",
+                "artist_image_generator_aig_licence_object_0": {
+                    "nextValidation": 1711152000,
+                    "is_valid": true,
+                    "error": "",
+                    "valid_until": null
+                }
+            }
+        },
+        {
+            "step": "runPHP",
+            "code": "<?php require '/wordpress/wp-load.php'; var_dump(get_option( 'artist_image_generator_aig_licence_key_activated_0')); var_dump(get_option( 'artist_image_generator_option_name')); var_dump(get_option( 'artist_image_generator_aig_licence_object_0')); ?>"
+        }
+    ]
+}
