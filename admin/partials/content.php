@@ -254,7 +254,15 @@
                     </tr>
                     <tr>
                         <td>user_img</td>
-                        <td><?php esc_attr_e('To use SD3 Face Swapping, configure to "true". (e.g., "true", "false". Default is "false")', 'artist-image-generator'); ?></td>
+                        <td><?php esc_attr_e('To let user upload its photo OR use SD3 Face Swapping with model="aig-model", configure to "true". (e.g., "true", "false". Default is "false")', 'artist-image-generator'); ?></td>
+                    </tr>
+                    <tr>
+                        <td>integrate_google_drive_id</td>
+                        <td>
+                            <?php echo sprintf(
+    esc_attr__('To use prebuilt Google Drive Gallery, set the Integrate Google Drive shortcode id. For more information, visit %s.', 'artist-image-generator'),
+    '<a href="' . esc_url('https://artist-image-generator.com/how-to-build-a-gallery-with-prebuilt-images-using-wc-image-customizer/') . '" target="_blank">' . esc_html__('this link', 'artist-image-generator') . '</a>'
+);?></td>
                     </tr>
                 </tbody>
             </table>
@@ -273,6 +281,16 @@
             [aig uniqid="test1" prompt="A dramatic studio headshot of a male subject with strong, directional lighting. Use a 100mm lens to capture a tight headshot with excellent background compression. Set the aperture to f/4 to keep the entire face in sharp focus while maintaining a pleasing depth of field. Use a shutter speed of 1/125s to sync with studio strobes and ensure proper exposure. Focus on the subject's eyes to draw the viewer into the portrait. {topics} {public_prompt}." 
             topics="" download="manual"  size="1024x1024" n="1" user_limit="5" 
             user_limit_duration="30" mask_url="{your-mask}.png" origin_url="{your-image}.png" <strong>model="aig-model" user_img="true"</strong>]
+            </div> 
+            <p>Exemple of shortcode with user photo and prebuilt image gallery :</p>
+            <div class="aig-code">
+            [aig uniqid="test1" prompt="a photo of a beautiful {public_prompt}, 
+                freckles, wearing a pine green velvet dress with embroidery, 
+                holding a single black potted rose, in a pretty flower garden. 
+                Style : {topics}." topics="" 
+                download="manual" model="dall-e-3" size="1024x1024" n="1" user_limit="5" 
+                user_limit_duration="30" mask_url="{your-mask}.png" origin_url="{your-image}.png"
+                <strong>integrate_google_drive_id="1" user_img="true"</strong>] 
             </div>
             
 

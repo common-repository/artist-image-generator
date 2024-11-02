@@ -312,6 +312,8 @@ class Artist_Image_Generator_Public
                 'mask_url' => '',
                 'origin_url' => '',
                 'user_img' => 'false',
+                'integrate_google_drive_id' => '',
+                'integrate_dropbox_id' => '',
                 'uniqid' => uniqid()
             ),
             $atts
@@ -392,21 +394,73 @@ class Artist_Image_Generator_Public
                 <hr />
                 <?php if (esc_attr($atts['model']) === Constants::AIG_MODEL && esc_attr($atts['user_img']) === 'true') { ?>
                 <div class="form-group">
-                    <label for="aig_public_user_img" class="form-label"><?php esc_html_e('Image:', 'artist-image-generator');?></label>
-                    <input type="file" name="aig_public_user_img" id="aig_public_user_img" class="form-control" accept="image/jpeg, image/png, image/webp"/>
-                    <br/><small id="aig_public_user_img_help" class="form-text text-muted"><?php esc_html_e('Upload a profile picture to swap.', 'artist-image-generator');?></small>
+                    <label for="aig_public_user_img" class="aig-drop-container">
+                        <span class="aig-drop-title"><?php esc_html_e('Drop your profile image here to faceswap', 'artist-image-generator');?></span>
+                        <?php esc_html_e('or', 'artist-image-generator');?>
+                        <input type="file" id="aig_public_user_img" class="form-control aig-file-upload" accept="image/jpeg, image/png, image/webp" />
+                    </label>
                 </div>
-                <br>
+                <br/>
+                <?php } elseif (esc_attr($atts['user_img']) === 'true') { ?>
+                <div class="form-group">
+                    <label for="aig_public_user_img" class="aig-drop-container">
+                        <span class="aig-drop-title"><?php esc_html_e('Drop your own image here', 'artist-image-generator');?></span>
+                        <?php esc_html_e('or', 'artist-image-generator');?>
+                        <input type="file" id="aig_public_user_img" class="form-control aig-file-upload" accept="image/jpeg, image/png, image/webp" />
+                    </label>
+                </div>
+                <br/>
+                <?php } ?>
+                <?php if (!empty(esc_attr($atts['integrate_google_drive_id']))) { ?>
+                <div class="form-group">
+                    <button id="aig_open_modal_btn_<?php echo esc_attr($atts['uniqid']); ?>" class="btn btn-primary"><?php esc_html_e('Select from gallery', 'artist-image-generator');?></button>
+                    <div id="aig-modal_<?php echo esc_attr($atts['uniqid']); ?>" class="aig-modal">
+                        <div class="aig-modal-content">
+                            <span class="aig-close">&times;</span>
+                            <div class="aig-modal-header">
+                                <h2><?php esc_html_e('Search and select one or more images to use', 'artist-image-generator'); ?></h2>
+                                <input type="text" id="searchInput" placeholder="<?php esc_html_e('Search an image...', 'artist-image-generator');?>">
+                            </div>
+                            <div class="aig-modal-body">
+                                <?php echo do_shortcode('[integrate_google_drive id="'.esc_attr($atts['integrate_google_drive_id']).'"]'); ?>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <hr/>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const modal = document.getElementById('aig-modal_<?php echo esc_attr($atts['uniqid']); ?>');
+                            const btn = document.getElementById('aig_open_modal_btn_<?php echo esc_attr($atts['uniqid']); ?>');
+                            const span = modal.getElementsByClassName('aig-close')[0];
+
+                            btn.onclick = function(e) {
+                                e.preventDefault();
+                                modal.style.display = 'block';
+                            }
+
+                            span.onclick = function() {
+                                modal.style.display = 'none';
+                            }
+
+                            window.onclick = function(event) {
+                                if (event.target == modal) {
+                                    modal.style.display = 'none';
+                                }
+                            }
+                        });
+                    </script>    
+                <?php } elseif (!empty(esc_attr($atts['integrate_dropbox_id']))) { ?>
+                    <?php //echo do_shortcode('[integrate_dropbox id="'.esc_attr($atts['integrate_dropbox_id']).'"]'); ?>
                 <?php } ?>
                 <div class="form-group">
-                    <label for="aig_public_prompt" class="form-label"><?php esc_html_e('Description:', 'artist-image-generator');?></label>
+                    <label for="aig_public_prompt" class="form-label"><?php esc_html_e('Describe the image you want:', 'artist-image-generator');?></label>
                     <textarea name="aig_public_prompt" id="aig_public_prompt" class="form-control" placeholder="<?php esc_html_e("Enter a description for the image generation (e.g., 'A beautiful cat').", 'artist-image-generator'); ?>"></textarea>
-                    <small id="aig_public_prompt_help" class="form-text text-muted"><?php esc_html_e('Enter a description for the image generation.', 'artist-image-generator');?></small>
+                    <small id="aig_public_prompt_help" class="aig-public-prompt-help form-text text-muted">
+                        <?php esc_html_e('Enter a description for the image generation.', 'artist-image-generator');?>
+                    </small>
                 </div>
-                <hr class="aig-results-separator" style="display:none" />
-                <div class="aig-errors"></div>
-                <div class="aig-results"></div>
-                <hr />
+                <br/>
                 <?php if ($checkLicence && !empty($this->options[Constants::REFILL_PRODUCT_ID]) && is_user_logged_in()) : 
                     $user_id = get_current_user_id();
                     $user_balance = $this->credits_balance_manager::get_user_balance($user_id);
@@ -433,6 +487,14 @@ class Artist_Image_Generator_Public
                         <?php esc_html_e('Generate Image / Retry', 'artist-image-generator'); ?>
                     </button>
                 <?php endif; ?>
+                <hr class="aig-results-separator" style="display:none" />
+                <div class="aig-errors"></div>
+                <div class="aig-results"></div>
+                <div class="aig-clear" style="display:hidden;">
+                    <a href="#" class="aig-clear-button" data-confirm="<?php esc_html_e('Are you sure you want to clear all stored images?', 'artist-image-generator'); ?>">
+                        <?php esc_html_e('Clear all stored images', 'artist-image-generator'); ?>
+                    </a>
+                </div>
             </form>
         </div>
     <?php

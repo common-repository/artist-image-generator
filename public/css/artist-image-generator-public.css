@@ -175,7 +175,28 @@ textarea[name="aig_public_prompt"] {
     background-color: var(--aig-secondary-color);
 }
 
+.aig-button-outlined {
+    background-color: transparent;
+    color: #0073aa;
+    border: 2px solid #0073aa;
+}
 
+.aig-button-outlined:hover {
+    color: #fff;
+    background-color: #0073aa;
+    border-color: #0073aa;
+}
+
+.aig-button-outlined:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.3);
+}
+
+.aig-button-outlined:active {
+    color: #fff;
+    background-color: #005f8d;
+    border-color: #005f8d;
+}
 
 .summary .aig-form-container {
     margin: 0;
@@ -193,4 +214,162 @@ button.aig-download-button.active {
 }
 .aig-image {
     cursor: pointer;
+}
+
+.form-separator {
+    text-align: center;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+/* Modal styles */
+.aig-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.3s;
+}
+
+.aig-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 100%;
+    box-sizing: border-box;
+    animation: slideIn 0.3s;
+}
+
+.aig-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: normal;
+}
+
+.aig-close:hover,
+.aig-close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.aig-modal-header {
+    margin-bottom: 20px;
+}
+
+.aig-modal-header input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.aig-modal-body {
+    padding: 10px 0;
+}
+
+.aig-modal-body .igd-gallery-item.active {
+	border: 4px solid green;
+}
+
+.aig-clear {
+    margin: 10px auto;
+    text-align: center;
+}
+.aig-clear-button {
+    margin: auto;
+    color: red;
+    text-decoration: none;
+    font-weight: lighter;
+    cursor: pointer;
+    text-align: center;
+}
+
+.aig-clear-button:hover {
+    text-decoration: underline;
+}
+
+.aig-help-tour {
+    float: right; 
+    margin-left: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+/** Drag and drop **/
+.aig-drop-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 200px;
+    padding: 20px;
+    border: 2px dashed var(--aig-border-color);
+    cursor: pointer;
+    transition: background .2s ease-in-out, border .2s ease-in-out;
+  }
+  
+  .aig-drop-container:hover {
+    background: #eee;
+  }
+  
+  .aig-drop-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .aig-drop-container.drag-active {
+    background: #eee;
+  }
+  
+  .aig-drop-container input[type=file] {
+    width: 350px;
+    max-width: 100%;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid var(--aig-border-color);
+  }
+  
+  .aig-drop-container input[type=file]:focus {
+    outline: 2px dashed var(--aig-border-color);
+    outline-offset: 2px;
+  }
+  
+  .aig-drop-container input[type=file]::file-selector-button {
+    margin-right: 8px;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .aig-modal-content {
+        width: 90%;
+        margin: 20% auto;
+    }
 }

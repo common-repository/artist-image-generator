@@ -4,7 +4,7 @@ Tags: ai, dalle, image, upscale, woocommerce, sell online, e-commerce, shop, cus
 Requires at least: 5.3
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: v1.1.10
+Stable tag: v1.1.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://artist-image-generator.com/#donate
@@ -21,7 +21,23 @@ With Artist Image Generator, you can easily customize images and offer interacti
 
 Compatible with WooCommerce and popular page builders like Gutenberg, Elementor,  Artist Image Generator is perfect for bloggers, designers, merchants and anyone looking to add a creative touch to their website.
 
-### New Feature 2024/10/03: [Create'N Face Swap Using Stable Diffusion 3](https://artist-image-generator.com/product/credits/)
+### 2024/10/31: [Customer image & Prebuilt Image Gallery with Google Drive](https://artist-image-generator.com/how-to-build-a-gallery-with-prebuilt-images-using-wc-image-customizer/)
+
+**It requires Integrate Google Drive plugin (free version) and [WC Product Ai Image Customizer](https://artist-image-generator.com/product/woo-product-ai-image-customizer-to-sell-personalized-products/).**
+
+https://youtu.be/zHkzAFdm9So
+
+In WC Product Ai Image Customizer, the customer can now :
+
+✅ Create its own AI image like before
+
+✅ Use its own image by defining **user_img="true"**
+
+✅ Select images inside a Google Drive Gallery you built (prebuilt designs) **integrate_google_drive_id="{shortcode_id}"**
+
+If you have a white t-shirt and a red one, you can now **manage variations** effortlessly by simply filling in new fields within each variation: original_url and mask_url. When a customer creates or selects an image, it will be previewed on the current product. If they decide to switch from the white to the red variation, the image will be retained and previewed on the red product without any additional clicks.
+
+### [Create'N Face Swap Using Stable Diffusion 3](https://artist-image-generator.com/product/credits/)
 
 **This service requires [WC Product Ai Image Customizer](https://artist-image-generator.com/product/woo-product-ai-image-customizer-to-sell-personalized-products/) and use [AIG credits](https://artist-image-generator.com/product/credits/) to operate. It does not require a DALL·E key, so you can use it as a standalone solution.**
 
@@ -29,17 +45,9 @@ To enhance and simplify the use of AI in your e-commerce products and offer new 
 
 **And with this, your customers now have the ability to upload a photo of themselves and create ultra-realistic scenes and portraits (FaceSwapping).**
 
-https://youtu.be/_UD1_To_89I
-
 To use these features, you simply need to purchase credits, retrieve your Token from your AIG account, and enter it on your site: Artist Image Generator > Settings.
 
-Then, call this service directly by specifying the **model=aig-model** and add a new attribute **user_img=true** (to allow users upload a photo) and you're all set.
-
-✅ Stable Diffusion 3
-
-✅ Ultra-realistic imagery
-
-✅ Customer can upload a photo
+Then, call this service directly by specifying the **model="aig-model"** and add a new attribute **user_img="true"** (to allow users upload a photo) and you're all set.
 
 
 ### [Upscaling service](https://artist-image-generator.com/product/credits/)
@@ -94,13 +102,6 @@ The customer visits the product page, generates an AI image from a prompt and/or
 You can also generate a live basic previews of the personalized product using a mask image. The mask can be created through AIG or using external tools.
 
 It fits very well if you want to sell unique products like : frames, puzzle, wallpapers, t-shirts, mugs, digital art, any product of your choice !
-
-
-### New partnership
-
-If you are creating a new website for you or a client, Artist Image Generator is working really well with hostings which are optimized for WordPress like **Hostinger**. [Take a look here and get -20% + free Domain Name](https://hostinger.fr?REFERRALCODE=1PIERRE471)
-
-### Artist Image Generator's Key Features
 
 #### AI-Powered Image Generation through DALL·E
 Create unique images from scratch based on text prompts using DALL·E technology. Output variations of existing images or compose your own (pro) to generate unique and royalty-free images.
@@ -209,11 +210,12 @@ For more information on using and installing the Artist Image Generator plugin, 
 1. Fill your OpenAI API Key here in "Settings" tab.
 2. Create new images in the "Generate" tab.
 3. Create image variations in the "Variate" tab.
-4. Pro - Create image edition in the "Edit" tab.
+4. Create image edition in the "Edit" tab.
 5. The public shortcode avatar and image creator functionnality.
-6. Pro - Create image composition in the "Edit" tab.
-7. Generated images which are not saved are available for 1h
-8. Pro - Generate up to 10 images using DALL·E 3 model
+6. WC Product AI Image Customizer : full features, photo upload, gallery, image creation.
+7. Generated images which are not saved are available for 1h.
+8. Generate up to 10 images using DALL·E 3 model.
+9. WC Product AI Image Customizer : face swapping results.
 
 == Frequently Asked Questions ==
 
@@ -298,6 +300,11 @@ Yes, Artist Image Generator is perfect for creating visuals for your blog and ar
 While Artist Image Generator is primarily designed for digital content, you can use the generated images for print materials as well. However, please be aware that the image quality and resolution might not be optimal for high-quality print purposes. It is recommended to test the images before using them in print projects.
 
 == Changelog ==
+1.1.11 - 2024-08-11
+- Add prebuilt gallery
+- Add customer photo upload
+- Product AI Image Customizer (1.0.7)
+
 1.1.9 - 2024-08-11
 - Stable Diffusion 3 + FaceSwapping
 - Product AI Image Customizer (1.0.6)
@@ -469,3 +476,5 @@ While Artist Image Generator is primarily designed for digital content, you can 
 1.0.0 - 2023-02-14
 ----------------------------------------------------------------------
 - Initial release
+
+

@@ -1,7 +1,147 @@
+let swiper;
+
+function createFigureElement(image, index, form) {
+    const figure = document.createElement("figure");
+    figure.className = "custom-col";
+
+    const imgElement = document.createElement("img");
+    imgElement.src = image.url;
+    imgElement.className = "aig-image";
+    imgElement.alt = "Generated Image " + (index + 1);
+    figure.appendChild(imgElement);
+
+    const figCaption = document.createElement("figcaption");
+    const downloadButton = document.createElement("button");
+    downloadButton.setAttribute('type', 'button');
+    downloadButton.className = "aig-download-button";
+
+    const label = form.getAttribute("data-download") === "manual" ? 'Download Image ' + (index + 1) : 'Use Image ' + (index + 1) + ' as profile picture';
+    downloadButton.innerHTML = '<span class="dashicons dashicons-download"></span> ' + label;
+    figCaption.appendChild(downloadButton);
+
+    figure.appendChild(figCaption);
+
+    // Gérer le clic sur le bouton de téléchargement
+    handleDownloadButtonClick(downloadButton, image, index, form);
+
+    return figure;
+}
+
+function handleDownloadButtonClick(button, image, index, form) {
+    button.addEventListener("click", function () {
+        if (form.getAttribute("data-download") !== "wp_avatar") {
+            const link = document.createElement("a");
+            link.href = image.url;
+            link.target = '_blank';
+            link.download = "image" + (index + 1) + ".png";
+            link.style.display = "none";
+
+            form.appendChild(link);
+            link.click();
+            form.removeChild(link);
+        } else {
+            fetch(ajaxurl, {
+                method: "POST",
+                body: new URLSearchParams({
+                    action: "change_wp_avatar",
+                    image_url: image.url,
+                }),
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Cache-Control": "no-cache",
+                },
+            })
+                .then((response) => response.json())
+                .then((result) => {
+                    if (confirm("You have successfully changed your profile picture.")) {
+                        window.location.reload();
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error API request :", error);
+                });
+        }
+    });
+}
+
+function insertFigureElement(container, figure) {
+    if (container.firstChild) {
+        container.insertBefore(figure, container.firstChild);
+    } else {
+        container.appendChild(figure);
+    }
+}
+
+function storeImagesLocally(newImages) {
+    const storedImages = retrieveStoredImages();
+    const currentTime = Date.now();
+
+    const imagesWithTimestamp = newImages.map(image => ({
+        ...image,
+        timestamp: currentTime
+    }));
+
+    const combinedImages = [...storedImages, ...imagesWithTimestamp];
+    const validImages = removeExpiredImages(combinedImages);
+
+    localStorage.setItem('aig-local-generated-images', JSON.stringify(validImages));
+}
+
+function removeExpiredImages(images) {
+    const oneHour = 60 * 60 * 1000;
+    const currentTime = Date.now();
+    return images.filter(image => (currentTime - image.timestamp) <= oneHour);
+}
+
+function retrieveStoredImages() {
+    const storedImages = localStorage.getItem('aig-local-generated-images');
+    if (!storedImages) return [];
+
+    let images = JSON.parse(storedImages);
+    images = removeExpiredImages(images);
+    localStorage.setItem('aig-local-generated-images', JSON.stringify(images));
+    return images;
+}
+
+function initializeSwiper(swiper, form) {
+    let $figures = form.querySelectorAll('.aig-results figure');
+
+    if ($figures.length > 0) {
+        const aigResults = form.querySelector('.aig-results');
+        const swiperWrapper = document.createElement('div');
+        swiperWrapper.className = 'swiper-wrapper';
+
+        $figures.forEach(figure => {
+            figure.classList.add('swiper-slide');
+            swiperWrapper.appendChild(figure);
+        });
+
+        aigResults.innerHTML = '';
+        aigResults.appendChild(swiperWrapper);
+
+        const swiperPagination = document.createElement('div');
+        swiperPagination.className = 'swiper-pagination';
+        aigResults.appendChild(swiperPagination);
+
+        if (swiper && aigResults.classList.contains('swiper-initialized')) {
+            swiper.update();
+        } else {
+            swiper = new Swiper(form.querySelector('.aig-results'), {
+                direction: 'horizontal',
+                slidesPerView: 'auto',
+                autoWidth: true,
+                spaceBetween: 0,
+                loop: false,
+                pagination: {
+                    el: '.swiper-pagination',
+                },
+            });
+        }
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const forms = document.querySelectorAll(".aig-form");
-    let swiper;
 
     if (forms.length) {
         forms.forEach((form, formIndex) => {
@@ -210,63 +350,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         if (mergedResponse.images && mergedResponse.images.length > 0) {
                             mergedResponse.images.forEach((image, index) => {
-                                const figure = document.createElement("figure");
-                                figure.className = "custom-col";
-            
-                                const imgElement = document.createElement("img");
-                                imgElement.src = image.url;
-                                imgElement.className = "aig-image";
-                                imgElement.alt = "Generated Image " + (index + 1);
-                                figure.appendChild(imgElement);
-            
-                                const figCaption = document.createElement("figcaption");
-                                const downloadButton = document.createElement("button");
-                                downloadButton.setAttribute('type', 'button');
-                                downloadButton.className = "aig-download-button";
-            
-                                const label = form.getAttribute("data-download") === "manual" ? 'Download Image ' + (index + 1) : 'Use Image ' + (index + 1) + ' as profile picture';
-                                downloadButton.innerHTML = '<span class="dashicons dashicons-download"></span> ' + label;
-                                figCaption.appendChild(downloadButton);
-            
-                                figure.appendChild(figCaption);
-                                containerResults.appendChild(figure);
-            
-                                // Image download management
-                                downloadButton.addEventListener("click", function () {
-                                    if (form.getAttribute("data-download") !== "wp_avatar") {
-                                        const link = document.createElement("a");
-                                        link.href = image.url;
-                                        link.target = '_blank';
-                                        link.download = "image" + (index + 1) + ".png";
-                                        link.style.display = "none";
-            
-                                        form.appendChild(link);
-                                        link.click();
-                                        form.removeChild(link);
-                                    } else {
-                                        fetch(ajaxurl, {
-                                            method: "POST",
-                                            body: new URLSearchParams({
-                                                action: "change_wp_avatar",
-                                                image_url: image.url,
-                                            }),
-                                            headers: {
-                                                "Content-Type": "application/x-www-form-urlencoded",
-                                                "Cache-Control": "no-cache",
-                                            },
-                                        })
-                                            .then((response) => response.json())
-                                            .then((result) => {
-                                                if (confirm("You have successfully changed your profile picture.")) {
-                                                    window.location.reload();
-                                                }
-                                            })
-                                            .catch((error) => {
-                                                console.error("Error API request :", error);
-                                            });
-                                    }
-                                });
+                                const figure = createFigureElement(image, index, form);
+                                insertFigureElement(containerResults, figure);
                             });
+
+                            // Store images générées localy
+                            storeImagesLocally(mergedResponse.images);
                         }
 
                         if (mergedResponse.errors && mergedResponse.errors.length > 0) {
@@ -292,47 +381,47 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         }
 
-                        let $figures = form.querySelectorAll('.aig-results figure');
-
-                        if ($figures.length > 0) {
-                            const aigResults = form.querySelector('.aig-results');
-                            const swiperWrapper = document.createElement('div');
-                            swiperWrapper.className = 'swiper-wrapper';
-
-                            $figures.forEach(figure => {
-                                figure.classList.add('swiper-slide');
-                                swiperWrapper.appendChild(figure);
-                            });
-
-                            aigResults.innerHTML = '';
-                            aigResults.appendChild(swiperWrapper);
-
-                            const swiperPagination = document.createElement('div');
-                            swiperPagination.className = 'swiper-pagination';
-                            aigResults.appendChild(swiperPagination);
-
-                            if (swiper && aigResults.hasClass == 'swiper-initialized') {
-                                swiper.update();
-                            }
-                            else {
-                                swiper = new Swiper(form.querySelector('.aig-results'), {
-                                    direction: 'horizontal',
-                                    slidesPerView: 'auto',
-                                    autoWidth: true,
-                                    spaceBetween: 0,
-                                    loop: false,
-                                    pagination: {
-                                        el: '.swiper-pagination',
-                                    },
-                                });
-                            }
-                        }
+                        initializeSwiper(swiper, form);
                 
                     } catch (error) {
                         console.error("API Request Error :", error);
                     }
                 }
             });
+
+            const storedImages = retrieveStoredImages();
+            const clearButton = form.querySelector('.aig-clear-button');
+
+            if (storedImages.length > 0) {
+                const insertImagePromises = storedImages.map((image, index) => {
+                    return new Promise((resolve) => {
+                        const figure = createFigureElement(image, index, form);
+                        setTimeout(() => {
+                            insertFigureElement(form.querySelector(".aig-results"), figure);
+                            resolve();
+                        }, 500);
+                    });
+                });
+            
+                Promise.all(insertImagePromises).then(() => {
+                    form.querySelector(".aig-results-separator").style.display = 'block';
+                    initializeSwiper(swiper, form);
+                });
+
+                clearButton.style.display = 'block';
+                clearButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const confirmation = confirm(this.getAttribute('data-confirm'));
+                    if (confirmation) {
+                        localStorage.removeItem('aig-local-generated-images');
+                        location.reload();
+                    }
+                });
+            }
+            else {
+                clearButton.style.display = 'none';
+            }
+            
         });
     }
 });

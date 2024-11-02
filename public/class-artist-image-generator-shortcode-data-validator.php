@@ -30,4 +30,51 @@ class Artist_Image_Generator_Shortcode_Data_Validator {
         $size = strtolower($size);
         return in_array($size, $possibleSizes) ? $size : $defaultSize;
     }
+
+    public function validateUrls($urls)
+    {
+        $urls = str_replace(['[', ']'], ['{', '}'], $urls);
+
+        if (!is_array($urls)) {
+            return '';
+        }
+    
+        $urlPattern = '/\b(?:https?|ftp):\/\/[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s]*)?\b/i';
+        $validUrls = [];
+    
+        foreach ($urls as $url) {
+            if (preg_match($urlPattern, $url)) {
+                $validUrls[] = esc_url($url);
+            }
+        }
+            
+        return $validUrls;
+    }
+
+    public function validateVariationsJSON($json)
+    {
+        if (!is_string($json)) {
+            return '';
+        }
+        
+        $json = str_replace(['[', ']'], ['{', '}'], $json);
+        $decoded = json_decode($json, true);
+        if (!is_array($decoded)) {
+            return '';
+        }
+
+        $validVariations = [];
+        foreach ($decoded as $item) {
+            if (is_array($item) && isset($item['id'], $item['origin_url'], $item['mask_url'])) {
+                $cleanedItem = [
+                    'id' => intval($item['id']),
+                    'origin_url' => esc_url($item['origin_url']),
+                    'mask_url' => esc_url($item['mask_url']),
+                ];
+                $validVariations[] = $cleanedItem;
+            }
+        }        
+
+        return $validVariations;
+    }
 }
